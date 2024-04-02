@@ -1,0 +1,30 @@
+version: 0.2
+phases:
+install:
+runtime-versions:
+java: corretto17
+commands:
+- apt update -y
+- apt install -y maven
+- apt install awscli -y
+pre_build:
+commands:
+- java -version
+- mvn -version
+- aws --version
+build:
+commands:
+- echo Entered the build phase...
+- mvn clean package
+post_build:
+commands:
+- echo Build completed successfully
+- ls -l
+- cd webapp/target
+- ls -l
+- echo "Copying War file to destination account"
+- aws s3 cp ./webapp.war s3://matsontest/war/webapp.war
+artifacts:
+files:
+- "**/*.war"
+discard-paths: yes
